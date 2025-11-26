@@ -16,3 +16,6 @@ Thumbs.db
 
 # Docker
 /docker/*.log
+
+# MySQL data directory
+docker/mysql/data/
