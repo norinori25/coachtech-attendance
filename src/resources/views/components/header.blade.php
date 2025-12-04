@@ -1,6 +1,6 @@
 <header class="header">
     <div class="header__logo">
-        <a href="/"><img src="{{ asset('img/logo.svg') }}" alt="ロゴ"></a>
+        <img src="{{ asset('img/logo.svg') }}" alt="ロゴ">
     </div>
     @if( !in_array(Route::currentRouteName(), ['register', 'login', 'verification.notice']) )
     
@@ -11,9 +11,9 @@
                 <li><a href="/attendance/list">勤怠一覧</a></li>
                 <li><a href="/stamp_correction_request/list">申請</a></li>
                 <li>
-                    <form action="/logout" method="post">
+                    <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button class="header__logout">ログアウト</button>
+                        <button type="submit" class="header__logout">ログアウト</button>
                     </form>
                 </li>
             @endif

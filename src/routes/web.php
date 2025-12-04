@@ -32,6 +32,8 @@ Route::get('/login', function () {
 })->name('login');
 
 Route::post('/login', [AuthenticatedSessionController::class, 'store']);
+Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
+    ->name('logout');
 
 Route::middleware(['auth','verified'])->group(function () {
     /* 出勤登録画面 */
@@ -55,10 +57,10 @@ Route::get('/email/verify', function () {
 })->name('verification.notice');
 
 Route::post('/email/verification-notification', function (Request $request) {
-    session()->get('unauthenticated_user')->sendEmailVerificationNotification();
-    session()->put('resent', true);
+    $request->user()->sendEmailVerificationNotification();
+
     return back()->with('message', 'Verification link sent!');
-})->name('verification.send');
+})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
 Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
     $request->fulfill();
@@ -67,10 +69,12 @@ Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $requ
 })->middleware(['auth'])->name('verification.verify');
 
 Route::prefix('admin')->group(function () {
-
     /* 管理者ログイン */
-    Route::get('/login', [AdminAuthController::class, 'create']);
+    Route::get('/login', [AdminAuthController::class, 'create'])->name('admin.login');
     Route::post('/login', [AdminAuthController::class, 'store']);
+
+    /* 管理者ログアウト */
+    Route::post('/logout', [AdminAuthController::class, 'destroy'])->name('admin.logout');
 
     /* 認証必須 */
     Route::middleware('auth:admin')->group(function () {

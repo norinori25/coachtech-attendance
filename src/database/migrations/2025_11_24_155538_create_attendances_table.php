@@ -13,8 +13,8 @@ class CreateAttendancesTable extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->date('date')->index(); // 勤務日検索用にインデックス
             $table->string('status')->default('勤務外');
-            $table->dateTime('start_time')->nullable();
-            $table->dateTime('end_time')->nullable();
+            $table->time('start_time')->nullable();
+            $table->time('end_time')->nullable();
             $table->timestamps();
         });
     }

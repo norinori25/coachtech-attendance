@@ -11,6 +11,8 @@ use Illuminate\Support\ServiceProvider;
 use Laravel\Fortify\Fortify;
 use Laravel\Fortify\Contracts\RegisterResponse;
 use Laravel\Fortify\Http\Requests\LoginRequest as FortifyLoginRequest;
+use Laravel\Fortify\Contracts\LogoutResponse;
+
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -38,6 +40,16 @@ class FortifyServiceProvider extends ServiceProvider
         // ログイン画面（GET /login）
         Fortify::loginView(function () {
             return view('auth.login');
+        });
+
+        // ログアウト後のリダイレクト
+        $this->app->singleton(LogoutResponse::class, function ($app) {
+            return new class implements LogoutResponse {
+                public function toResponse($request)
+                {
+                    return redirect('/login');
+                }
+            };
         });
 
         // ログイン試行制限
