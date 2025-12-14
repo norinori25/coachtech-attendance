@@ -9,8 +9,9 @@
 @section('content')
 
 @include('components.admin_header')
-<form action="admin/login" method="post" class="authenticate center" novalidate>
+<form action="/login" method="post" class="authenticate center" novalidate>
     @csrf
+    <input type="hidden" name="is_admin_login" value="1">
     <h1 class="page__title">管理者ログイン</h1>
     <label for="mail" class="entry__name">メールアドレス</label>
     <input name="email" id="mail" type="email" class="input" value="{{ old('email') }}">

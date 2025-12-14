@@ -138,6 +138,8 @@
     width: 900px;
     border-collapse: collapse;
     font-size: 16px;
+    line-height: 1;
+    letter-spacing: 0.15em;
     background-color: #fff;
     border-radius: 10px;
     table-layout: fixed;
@@ -145,11 +147,12 @@
 
 /* ヘッダー */
 .table thead th {
+    height:40px;
     color: #737373;
     text-align: center;
     padding: 12px;
     font-weight: bold;
-    border-bottom: 2px solid #E1E1E1;
+    border-bottom: 3px solid #E1E1E1;
     /* ヘッダー下に太めの横線 */
 }
 
@@ -167,12 +170,15 @@
 
 /* 行 */
 .table tbody tr {
-    border-bottom: 1px solid #E1E1E1;
+    border-bottom: 2px solid #E1E1E1;
+    height: 33px;
 }
 
 .table tbody td {
+    height: 33px;
+    line-height: 33px;
     text-align: center;
-    padding: 12px;
+    padding: 3px;
     border: none;
     /* 縦線を消す */
 }
@@ -182,11 +188,36 @@
     display: inline-block;
     max-width: 100%;
     /* セル幅に収める */
-    padding: 6px 12px;
+    padding: 5px;
     color: #000;
     background-color: #fff;
     font-size: 16px;
     font-weight: bold;
     text-decoration: none;
     white-space: nowrap;
+}
+
+/* 勤怠詳細専用のテーブル調整 */
+.attendance-detail-table th {
+    width: 200px;
+    text-align: left;
+    padding: 5px 0 5px 20px;
+}
+
+.attendance-detail-table input[type="time"] {
+    display: inline-block;
+    margin-right: 6px;
+}
+
+/* 行の高さを広げる */
+.attendance-detail-table tr {
+    height: 50px;
+    /* 行全体の高さを広げる */
+}
+
+.table.attendance-detail-table td {
+    text-align: left;
+    color: #000;
+    padding: 8px 12px;
+    vertical-align: middle;
 }

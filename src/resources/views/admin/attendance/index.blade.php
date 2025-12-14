@@ -2,22 +2,38 @@
 
 @section('title', '勤怠一覧（管理者）')
 
+@section('css')
+<link rel="stylesheet" href="{{ asset('/css/attendance.css')  }}">
+@endsection
+
 @section('content')
+
 @include('components.admin_header')
-
 <div class="container">
-    <h1>勤怠一覧（管理者）</h1>
+    {{-- タイトル --}}
+    <h1 class="attendance-title">
+        <span class="attendance-title__line"></span>{{ now()->format('Y年m月d日') }} の勤怠
+    </h1>
 
-    {{-- 日付切替 --}}
-    <div class="d-flex justify-content-between mb-3">
-        <a href="{{ url('/admin/attendance/list?date=' . \Carbon\Carbon::parse($date)->subDay()->toDateString()) }}" 
-           class="btn btn-outline-primary">前日</a>
-        <span class="h5">{{ $date }}</span>
-        <a href="{{ url('/admin/attendance/list?date=' . \Carbon\Carbon::parse($date)->addDay()->toDateString()) }}" 
-           class="btn btn-outline-primary">翌日</a>
+    {{-- カレンダーバー --}}
+    <div class="calendar-bar">
+        <div class="calendar-bar__prev">
+            <a href="{{ route('admin.attendance.index', ['date' => $currentDate->copy()->subDay()->toDateString()]) }}">← 前日
+            </a>
+        </div>
+
+        <div class="calendar-bar__current">
+            <span class="calendar-icon">📅</span>
+            {{ $currentDate->format('Y/m/d') }}
+        </div>
+
+        <div class="calendar-bar__next">
+            <a href="{{ route('admin.attendance.index', ['date' => $currentDate->copy()->addDay()->toDateString()]) }}">翌日 →
+            </a>
+        </div>
     </div>
 
-    <table class="table table-bordered">
+    <table class="table">
         <thead>
             <tr>
                 <th>名前</th>
@@ -29,29 +45,33 @@
             </tr>
         </thead>
         <tbody>
-            @forelse($attendances as $attendance)
+            @foreach($attendances as $attendance)
                 <tr>
                     <td>{{ $attendance->user->name }}</td>
-                    <td>{{ $attendance->start_time ?? '' }}</td>
-                    <td>{{ $attendance->end_time ?? '' }}</td>
+                    <td>{{ $attendance->start_time ? \Carbon\Carbon::parse($attendance->start_time)->format('H:i') : '' }}</td>
+                    <td>{{ $attendance->end_time ? \Carbon\Carbon::parse($attendance->end_time)->format('H:i') : '' }}</td>
+                    {{-- 休憩時間を hh:mm 形式で表示 --}}
                     <td>
-                        {{-- 休憩は複数ある場合を考慮 --}}
-                        @if($attendance->breaks && $attendance->breaks->count())
-                            @foreach($attendance->breaks as $break)
-                                {{ $break->start_time }} - {{ $break->end_time }}<br>
-                            @endforeach
-                        @endif
+                        @php
+                            $totalBreakMinutes = 0;
+                            foreach ($attendance->breakRecords as $break) {
+                                if ($break->start_time && $break->end_time) {
+                                    $totalBreakMinutes += \Carbon\Carbon::parse($break->end_time)
+                                        ->diffInMinutes(\Carbon\Carbon::parse($break->start_time));
+                                }
+                            }
+                        @endphp
+                        {{ sprintf('%d:%02d', floor($totalBreakMinutes / 60), $totalBreakMinutes % 60) }}
                     </td>
-                    <td>{{ $attendance->total_hours ?? '' }}</td>
+
+                    {{-- 合計勤務時間（モデルのアクセサ利用） --}}
+                    <td>{{ $attendance->total_hours }}</td>
+
                     <td>
-                        <a href="{{ url('/admin/attendance/' . $attendance->id) }}" class="btn btn-info">詳細</a>
+                        <a href="{{ url('/admin/attendance/' . $attendance->id) }}" class=" btn-info">詳細</a>
                     </td>
                 </tr>
-            @empty
-                <tr>
-                    <td colspan="6">勤怠情報がありません</td>
-                </tr>
-            @endforelse
+            @endforeach
         </tbody>
     </table>
 </div>

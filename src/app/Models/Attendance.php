@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
+use App\Models\AttendanceRequest;
 
 class Attendance extends Model
 {
@@ -16,6 +17,12 @@ class Attendance extends Model
         'status',
         'start_time',
         'end_time',
+    ];
+
+    protected $casts = [
+        'date'       => 'date',
+        'start_time' => 'datetime:H:i',
+        'end_time'   => 'datetime:H:i',
     ];
 
     // リレーション: 勤怠はユーザーに属する
@@ -44,9 +51,9 @@ class Attendance extends Model
         // 休憩時間を差し引き
         if ($this->breakRecords && $this->breakRecords->count()) {
             foreach ($this->breakRecords as $break) {
-                if ($break->start_time && $break->end_time) {
-                    $workMinutes -= Carbon::parse($break->end_time)
-                        ->diffInMinutes(Carbon::parse($break->start_time));
+                if ($break->break_start && $break->break_end) {
+                    $workMinutes -= Carbon::parse($break->break_end)
+                        ->diffInMinutes(Carbon::parse($break->break_start));
                 }
             }
         }
@@ -55,6 +62,11 @@ class Attendance extends Model
         $hours = floor($workMinutes / 60);
         $minutes = $workMinutes % 60;
 
-        return sprintf('%2d:%02d', $hours, $minutes);
+        return sprintf('%02d:%02d', $hours, $minutes);
+    }
+
+    public function attendanceRequest()
+    {
+        return $this->hasOne(AttendanceRequest::class);
     }
 }

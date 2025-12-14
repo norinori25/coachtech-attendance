@@ -56,7 +56,9 @@ header {
 }
 
 .header__nav li {
-    margin-right: 30px;
+    margin-right: 40px;
+    font-size: 24px;
+    font-weight: bold;
 }
 
 .header__nav li:hover {
@@ -65,7 +67,8 @@ header {
 
 .header__logout {
     color: #fff;
-    font-size: 16px;
+    font-size: 24px;
+    font-weight: bold;
 }
 
 .header__logout:hover {

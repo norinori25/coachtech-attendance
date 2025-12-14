@@ -2,22 +2,35 @@
 
 @section('title', '申請一覧画面（一般ユーザー）')
 
+@section('css')
+<link rel="stylesheet" href="{{ asset('/css/request.css') }}">
+@endsection
+
 @section('content')
 
 @include('components.header')
 <div class="container">
-    <h1>申請一覧</h1>
-
-    {{-- タブリンク --}}
-    <div class="request-tabs mb-3 d-flex justify-content-between">
-        <a href="{{ url('/stamp_correction_request/list?status=pending') }}"
-           class="btn btn-outline-primary {{ request('status') === 'pending' ? 'active' : '' }}">
-            承認待ち
-        </a>
-        <a href="{{ url('/stamp_correction_request/list?status=approved') }}"
-           class="btn btn-outline-success {{ request('status') === 'approved' ? 'active' : '' }}">
-            承認済み
-        </a>
+    <h1 class="request-title">
+        <span class="request-title__line"></span>申請一覧
+    </h1>
+    
+    <div class="border">
+        <ul class="border__list">
+            <li>
+                <a href="{{ url('/stamp_correction_request/list?status=pending') }}"
+                   class="btn-outline-primary {{ request('status') === 'pending' ? 'active' : '' }}">
+                   承認待ち
+                </a>
+            </li>
+            @if(!auth()->guest())
+            <li>
+                <a href="{{ url('/stamp_correction_request/list?status=approved') }}"
+                   class="btn-outline-success {{ request('status') === 'approved' ? 'active' : '' }}">
+                   承認済み
+                </a>
+            </li>
+            @endif
+        </ul>
     </div>
 
     <table class="table">
@@ -36,12 +49,11 @@
                 <tr>
                     <td>{{ $request->status }}</td>
                     <td>{{ $request->user->name }}</td>
-                    <td>{{ $request->attendance_date }}</td>
+                    <td>{{ $request->attendance_date ? $request->attendance_date->format('Y/m/d') : '' }}</td>
                     <td>{{ $request->reason }}</td>
-                    <td>{{ $request->created_at->format('Y-m-d') }}</td>
+                    <td>{{ $request->created_at->format('Y/m/d') }}</td>
                     <td>
-                        <a href="{{ url('/stamp_correction_request/detail/' . $request->id) }}" class="btn btn-info">詳細
-                        </a>
+                        <a href="/attendance/detail/{{ $request->attendance_id }}" class="btn-info">詳細</a>
                     </td>
                 </tr>
             @endforeach

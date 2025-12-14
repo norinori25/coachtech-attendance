@@ -15,12 +15,12 @@ class CreateAttendanceRequestsTable extends Migration
     {
         Schema::create('attendance_requests', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');          // 申請者
-            $table->unsignedBigInteger('attendance_id');    // 対象勤怠
-            $table->string('reason');                       // 修正理由（備考）
-            $table->time('break_start')->nullable();        // 休憩開始（追加分）
-            $table->time('break_end')->nullable();          // 休憩終了（追加分）
-            $table->string('status')->default('承認待ち'); // 状態（承認待ち／承認済み）
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('attendance_id');
+            $table->string('reason');
+            $table->time('break_start')->nullable();
+            $table->time('break_end')->nullable();
+            $table->string('status')->default('承認待ち');
             $table->timestamps();
 
             // 外部キー制約

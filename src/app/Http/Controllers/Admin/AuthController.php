@@ -21,7 +21,7 @@ class AuthController extends Controller
 
         if (Auth::guard('admin')->attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->intended('/admin/attendance/list'); // 管理者用ダッシュボードへ
+            return redirect('/admin/attendance/list'); // 管理者用ダッシュボードへ
         }
 
         return back()->withErrors([
