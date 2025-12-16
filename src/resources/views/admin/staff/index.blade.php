@@ -2,36 +2,36 @@
 
 @section('title', 'スタッフ一覧（管理者）')
 
-@section('content')
-@include('components.admin_header')
+@section('css')
+<link rel="stylesheet" href="{{ asset('/css/staff.css') }}">
+@endsection
 
+@section('content')
+
+@include('components.admin_header')
 <div class="container">
-    <h1>スタッフ一覧（管理者）</h1>
+    <h1 class="staff-title">
+        <span class="staff-title__line"></span>スタッフ一覧
+    </h1>
 
     <table class="table table-bordered">
         <thead>
             <tr>
                 <th>名前</th>
                 <th>メールアドレス</th>
-                <th>勤怠一覧</th>
+                <th>月次勤怠</th>
             </tr>
         </thead>
         <tbody>
-            @forelse($users as $user)
+            @foreach($users as $user)
                 <tr>
                     <td>{{ $user->name }}</td>
                     <td>{{ $user->email }}</td>
                     <td>
-                        <a href="{{ url('/admin/attendance/staff/' . $user->id) }}" class="btn btn-info">
-                            勤怠一覧
-                        </a>
+                        <a href="{{ route('admin.attendance.staffList', $user->id) }}" class="btn btn-info">詳細</a>
                     </td>
                 </tr>
-            @empty
-                <tr>
-                    <td colspan="3">スタッフが登録されていません</td>
-                </tr>
-            @endforelse
+            @endforeach
         </tbody>
     </table>
 </div>

@@ -13,7 +13,7 @@
     <h1 class="request-title">
         <span class="request-title__line"></span>申請一覧
     </h1>
-    
+
     <div class="border">
         <ul class="border__list">
             <li>
@@ -25,8 +25,8 @@
             @if(!auth()->guest())
             <li>
                 <a href="{{ url('/stamp_correction_request/list?status=approved') }}"
-                   class="btn-outline-success {{ request('status') === 'approved' ? 'active' : '' }}">
-                   承認済み
+                    class="btn-outline-success {{ request('status') === 'approved' ? 'active' : '' }}">
+                    承認済み
                 </a>
             </li>
             @endif

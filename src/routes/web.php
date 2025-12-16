@@ -72,7 +72,8 @@ Route::middleware(['auth:admin', 'can:admin'])->group(function () {
         ->name('admin.staff.index');
 
     // スタッフ別勤怠
-    Route::get('/admin/attendance/staff/{id}', [AdminAttendanceController::class, 'staffList']);
+    Route::get('/admin/attendance/staff/{id}', [AdminAttendanceController::class, 'staffList'])
+    ->name('admin.attendance.staffList');
 
     // 修正申請一覧（管理者用）※同じパスだがガードで区別
     Route::get('/stamp_correction_request/list', [RequestController::class, 'index'])
