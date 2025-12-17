@@ -44,7 +44,8 @@ Route::middleware(['auth:web', 'verified'])->group(function () {
     Route::get('/attendance/list', [AttendanceController::class, 'list'])->name('attendance.index');
 
     // 勤怠詳細
-    Route::get('/attendance/detail/{id}', [AttendanceController::class, 'show']);
+    Route::get('/attendance/detail/{id}', [AttendanceController::class, 'show'])
+    ->name('attendance.show');
 
     // 勤怠修正申請一覧（ユーザー用）
     Route::get('/stamp_correction_request/list', [AttendanceRequestController::class, 'list'])
