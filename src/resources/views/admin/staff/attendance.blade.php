@@ -19,17 +19,14 @@
     {{-- カレンダーバー --}}
     <div class="calendar-bar">
         <div class="calendar-bar__prev">
-            <a href="{{ route('admin.attendance.index', ['month' => $currentMonth->copy()->subMonth()->format('Y-m')]) }}">← 前月
-            </a>
+            <a href="{{ route('admin.attendance.staffList', ['id' => $user->id, 'month' => $currentMonth->copy()->subMonth()->format('Y-m')]) }}">← 前月</a>
         </div>
         <div class="calendar-bar__current">
             <span class="calendar-icon">📅</span>
             {{ $currentMonth->format('Y/m') }}
         </div>
         <div class="calendar-bar__next">
-            <a href="{{ route('admin.attendance.index', ['month' => $currentMonth->copy()->addMonth()->format('Y-m')]) }}">
-                翌月 →
-            </a>
+            <a href="{{ route('admin.attendance.staffList', ['id' => $user->id, 'month' => $currentMonth->copy()->addMonth()->format('Y-m')]) }}">翌月 →</a>
         </div>
     </div>
 
@@ -47,14 +44,9 @@
         <tbody>
             @foreach($attendances as $attendance)
                 <tr>
-                    {{-- 日付を日本語曜日付きで表示 --}}
                     <td>{{ \Carbon\Carbon::parse($attendance->date)->locale('ja')->isoFormat('MM/DD(dd)') }}</td>
-
-                    {{-- 出勤・退勤時間を H:i 形式で表示 --}}
                     <td>{{ $attendance->start_time ? \Carbon\Carbon::parse($attendance->start_time)->format('H:i') : '' }}</td>
                     <td>{{ $attendance->end_time ? \Carbon\Carbon::parse($attendance->end_time)->format('H:i') : '' }}</td>
-
-                    {{-- 休憩時間を hh:mm 形式で表示 --}}
                     <td>
                         @php
                             $totalBreakMinutes = 0;
@@ -67,12 +59,9 @@
                         @endphp
                         {{ sprintf('%d:%02d', floor($totalBreakMinutes / 60), $totalBreakMinutes % 60) }}
                     </td>
-
-                    {{-- 合計勤務時間（モデルのアクセサ利用） --}}
                     <td>{{ $attendance->total_hours }}</td>
-
                     <td>
-                        <a href="/attendance/detail/{{ $attendance->id }}" class="btn-info">詳細</a>
+                        <a href="{{ route('attendance.show', $attendance->id) }}" class="btn-info">詳細</a>
                     </td>
                 </tr>
             @endforeach
@@ -80,7 +69,9 @@
     </table>
 
     <div class="text-end mt-2">
-        <button type="submit" class="btn btn-dark">csv出力</button>
+        <form action="{{ route('admin.attendance.exportCsv', $user->id) }}" method="GET">
+            <button type="submit" class="btn btn-dark">CSV出力</button>
+        </form>
     </div>
 </div>
 @endsection

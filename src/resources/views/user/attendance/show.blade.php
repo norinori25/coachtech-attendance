@@ -25,48 +25,47 @@
     @if($attendanceRequest)
 
         <table class="table attendance-detail-table">
-
             <tr>
                 <th>名前</th>
-                <td colspan="3">{{ $attendanceRequest->user->name }}</td>
+                <td>{{ $attendanceRequest->user->name }}</td>
+                <td colspan="3"></td>
             </tr>
             <tr>
                 <th>日付</th>
                 <td class="year-cell">{{ optional($attendanceRequest->attendance_date)->format('Y年') }}</td>
                 <td></td>
                 <td class="monthday-cell">{{ optional($attendanceRequest->attendance_date)->format('m月d日') }}</td>
+                <td></td>
             </tr>
             <tr>
                 <th>出勤・退勤</th>
                 <td>{{ optional($attendanceRequest->attendance->start_time)->format('H:i') }}</td>
-                <td>～</td>
+                <td class="time-separator">～</td>
                 <td>{{ optional($attendanceRequest->attendance->end_time)->format('H:i') }}</td>
+                <td></td>
             </tr>
             @foreach($attendanceRequest->attendance->breakRecords as $index => $break)
                 <tr>
                     <th>休憩{{ $index+1 }}</th>
                     <td>{{ optional($break->break_start)->format('H:i') }}</td>
-                    <td>～</td>
+                    <td class="time-separator">～</td>
                     <td>{{ optional($break->break_end)->format('H:i') ?? '' }}</td>
+                    <td></td>
                 </tr>
             @endforeach
-
             <tr>
                 <th>備考</th>
                 <td colspan="3">{{ $attendanceRequest->attendance->note ?? '' }}</td>
+                <td></td>
             </tr>
         </table>
 
-        {{-- 一般ユーザーにだけステータスを表示 --}}
+        {{-- ステータス表示（一般ユーザーのみ） --}}
         @if(!auth()->user()->is_admin)
             @if($attendanceRequest->status === '承認待ち')
-                <div class="text-warning">
-                    ＊承認待ちのため修正はできません。
-                </div>
+                <div class="text-warning">＊承認待ちのため修正はできません。</div>
             @elseif($attendanceRequest->status === '承認済み')
-                <div class="text-success">
-                    ＊この勤怠修正は承認済みです。
-                </div>
+                <div class="text-success">＊この勤怠修正は承認済みです。</div>
             @endif
         @endif
 
@@ -82,7 +81,7 @@
             @endif
         @endif
 
-    {{-- 申請が存在しない場合（未申請） --}}
+    {{-- 申請が存在しない場合 --}}
     @else
         <form action="{{ route('attendance_request.store') }}" method="POST" novalidate>
             @csrf
@@ -91,56 +90,56 @@
             <table class="table attendance-detail-table">
                 <tr>
                     <th>名前</th>
-                    <td colspan="4">{{ $attendance->user->name }}</td>
+                    <td>{{ $attendance->user->name }}</td>
+                    <td colspan="3"></td>
                 </tr>
                 <tr>
                     <th>日付</th>
                     <td class="year-cell">{{ optional($attendance->date)->format('Y年') }}</td>
+                    <td></td>
                     <td class="monthday-cell">{{ optional($attendance->date)->format('m月d日') }}</td>
+                    <td></td>
                 </tr>
                 <tr>
                     <th>出勤・退勤</th>
                     <td>
-                        <input type="time" name="start_time_new"
-                               value="{{ old('start_time_new', optional($attendance->start_time)->format('H:i')) }}">
+                        <input type="time" id="start_time_new" name="start_time_new" value="{{ old('start_time_new', optional($attendance->start_time)->format('H:i')) }}">
                         @error('start_time_new')
                             <div class="form__error">{{ $message }}</div>
                         @enderror
                     </td>
-                    <td>～</td>
+                    <td class="time-separator">～</td>
                     <td>
-                        <input type="time" name="end_time_new"
-                               value="{{ old('end_time_new', optional($attendance->end_time)->format('H:i')) }}">
+                        <input type="time" id="end_time_new" name="end_time_new" value="{{ old('end_time_new', optional($attendance->end_time)->format('H:i')) }}">
                         @error('end_time_new')
                             <div class="form__error">{{ $message }}</div>
                         @enderror
                     </td>
+                    <td></td>
                 </tr>
                 <tr>
                     <th>休憩</th>
                     <td>
-                        <input type="time" name="break_start_new" value="{{ old('break_start_new') }}">
+                        <input type="time" id="break_start_new" name="break_start_new" value="{{ old('break_start_new') }}">
                         @error('break_start_new')
                             <div class="form__error">{{ $message }}</div>
                         @enderror
                     </td>
-                    <td>～</td>
+                    <td class="time-separator">～</td>
                     <td>
-                        <input type="time" name="break_end_new" value="{{ old('break_end_new') }}">
+                        <input type="time" id="break_end_new" name="break_end_new" value="{{ old('break_end_new') }}">
                         @error('break_end_new')
                             <div class="form__error">{{ $message }}</div>
                         @enderror
                     </td>
+                    <td></td>
                 </tr>
                 <tr>
-                    <th>休憩{{ $attendance->breakRecords->count() + 1 }}</th>
-                    <td>
-                        <input type="time" name="break_start_new" value="{{ old('break_start_new') }}">
-                    </td>
-                    <td>～</td>
-                    <td>
-                        <input type="time" name="break_end_new" value="{{ old('break_end_new') }}">
-                    </td>
+                    <th>休憩{{ $attendance->breakRecords->count() ? $attendance->breakRecords->count() : 1 }}</th>
+                    <td><input type="time" id="break_start_new2" name="break_start_new" value="{{ old('break_start_new') }}"></td>
+                    <td class="time-separator">～</td>
+                    <td><input type="time" id="break_end_new2" name="break_end_new" value="{{ old('break_end_new') }}"></td>
+                    <td></td>
                 </tr>
                 <tr>
                     <th>備考</th>
@@ -150,35 +149,28 @@
                             <div class="form__error">{{ $message }}</div>
                         @enderror
                     </td>
+                    <td></td>
                 </tr>
             </table>
 
             <div class="text-end mt-2">
-                @if(auth()->user()->is_admin)
-                    {{-- 管理者の場合 --}}
-                    @if($attendanceRequest)
-                        @if($attendanceRequest->status === '承認待ち')
-                            <form action="{{ route('admin.attendance_request.approve', $attendanceRequest->id) }}" method="POST">
-                                @csrf
-                                <button type="submit" class="btn btn-dark">承認</button>
-                            </form>
-                        @elseif($attendanceRequest->status === '承認済み')
-                            <button type="button" class="btn btn-secondary" disabled>承認済み</button>
-                        @else
-                        {{-- 承認待ち／承認済み以外なら修正ボタン --}}
-                            <button type="submit" class="btn btn-dark">修正</button>
-                        @endif
-                    @else
-                        {{-- 未申請なら修正ボタン --}}
-                        <button type="submit" class="btn btn-dark">修正</button>
-                    @endif
-                @else
-                {{-- 一般ユーザーの場合 --}}
-                    <button type="submit" class="btn btn-dark">修正</button>
-                @endif
+                <button type="submit" class="btn btn-dark">修正</button>
             </div>
         </form>
     @endif
 </div>
+
+{{-- JSで未入力時に--:--を消す --}}
+@section('scripts')
+<script>
+  document.querySelectorAll('input[type="time"]').forEach(el => {
+    el.addEventListener('input', () => {
+      if (!el.value) {
+        el.placeholder = '';
+      }
+    });
+  });
+</script>
+@endsection
 
 @endsection

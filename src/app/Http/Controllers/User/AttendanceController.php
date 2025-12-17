@@ -106,7 +106,12 @@ class AttendanceController extends Controller
 
     public function show($id)
     {
-        $attendance = Attendance::with('breakRecords')->findOrFail($id);
-        return view('user.attendance.show', compact('attendance'));
+        $attendance = Attendance::with(['breakRecords','attendanceRequest'])->findOrFail($id);
+        $attendanceRequest = $attendance->attendanceRequest ?? null;
+
+        return view('user.attendance.show', [
+            'attendance' => $attendance,
+            'attendanceRequest' => $attendanceRequest,
+        ]);
     }
 }
