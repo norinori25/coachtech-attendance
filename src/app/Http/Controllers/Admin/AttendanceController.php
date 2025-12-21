@@ -74,43 +74,43 @@ class AttendanceController extends Controller
     }
 
     public function exportCsv($id)
-{
-    $user = User::findOrFail($id);
-    $attendances = Attendance::where('user_id', $id)->get();
+    {
+        $user = User::findOrFail($id);
+        $attendances = Attendance::where('user_id', $id)->get();
 
-    // CSVデータ作成
-    $csvData = [];
-    $csvData[] = ['名前', '日付', '出勤', '退勤', '休憩合計', '勤務時間'];
+        // CSVデータ作成
+        $csvData = [];
+        $csvData[] = ['名前', '日付', '出勤', '退勤', '休憩合計', '勤務時間'];
 
-    foreach ($attendances as $attendance) {
-        $csvData[] = [
-    $user->name,
-    '="' . Carbon::parse($attendance->date)->format('y-m-d') . '"',
-    optional($attendance->start_time)->format('H:i'),
-    optional($attendance->end_time)->format('H:i'),
-    $attendance->break_total,
-    $attendance->total_hours,
-];
+        foreach ($attendances as $attendance) {
+            $csvData[] = [
+                $user->name,
+                '="' . Carbon::parse($attendance->date)->format('y-m-d') . '"',
+                optional($attendance->start_time)->format('H:i'),
+                optional($attendance->end_time)->format('H:i'),
+                $attendance->break_total,
+                $attendance->total_hours,
+            ];
+        }
+
+        // UTF-8 → SJIS-win に変換して書き込み
+        $stream = fopen('php://temp', 'r+');
+        foreach ($csvData as $line) {
+            $line = array_map(function ($v) {
+                return mb_convert_encoding($v, 'SJIS-win', 'UTF-8');
+            }, $line);
+            fputcsv($stream, $line);
+        }
+        rewind($stream);
+
+        // ファイル名
+        $filename = $user->name . '_attendance.csv';
+
+        // ダウンロード返却
+        return response()->streamDownload(function () use ($stream) {
+            fpassthru($stream);
+        }, $filename, [
+            'Content-Type' => 'text/csv; charset=Shift_JIS',
+        ]);
     }
-
-    // UTF-8 → SJIS-win に変換して書き込み
-    $stream = fopen('php://temp', 'r+');
-    foreach ($csvData as $line) {
-        $line = array_map(function ($v) {
-            return mb_convert_encoding($v, 'SJIS-win', 'UTF-8');
-        }, $line);
-        fputcsv($stream, $line);
-    }
-    rewind($stream);
-
-    // ファイル名
-    $filename = $user->name . '_attendance.csv';
-
-    // ダウンロード返却
-    return response()->streamDownload(function () use ($stream) {
-        fpassthru($stream);
-    }, $filename, [
-        'Content-Type' => 'text/csv; charset=Shift_JIS',
-    ]);
-}
 }

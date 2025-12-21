@@ -1,12 +1,12 @@
 <?php
 
-namespace Tests\Feature\Auth;
+namespace Tests\Feature\Admin;
 
+use Tests\TestCase;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 
-class LoginTest extends TestCase
+class AdminLoginTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -18,27 +18,32 @@ class LoginTest extends TestCase
             'password' => 'password123',
         ]);
 
-        $response->assertSessionHasErrors(['email' => 'メールアドレスを入力してください']);
+        $response->assertSessionHasErrors([
+            'email' => 'メールアドレスを入力してください'
+        ]);
     }
 
     /** @test */
     public function パスワード未入力ならバリデーションエラー()
     {
         $response = $this->post('/login', [
-            'email' => 'test@example.com',
+            'email' => 'admin@example.com',
             'password' => '',
         ]);
 
-        $response->assertSessionHasErrors(['password' => 'パスワードを入力してください']);
+        $response->assertSessionHasErrors([
+            'password' => 'パスワードを入力してください'
+        ]);
     }
 
     /** @test */
-    public function 登録情報と一致しない場合はエラーメッセージが表示される()
+    public function 登録内容と一致しない場合はエラーメッセージが表示される()
     {
-        // ちゃんと存在するユーザーを作る
+        // 管理者ユーザーを作成（is_admin = true）
         User::factory()->create([
-            'email' => 'real@example.com',
+            'email' => 'realadmin@example.com',
             'password' => bcrypt('correctpass'),
+            'is_admin' => true,
         ]);
 
         // 間違った情報でログイン
@@ -47,6 +52,7 @@ class LoginTest extends TestCase
             'password' => 'wrongpass',
         ]);
 
+        // Fortify は email キーにエラーを返す
         $response->assertSessionHasErrors([
             'email' => 'ログイン情報が登録されていません'
         ]);
