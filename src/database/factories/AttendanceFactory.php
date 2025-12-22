@@ -20,6 +20,7 @@ class AttendanceFactory extends Factory
             'date' => $this->faker->date(),
             'start_time' => $this->faker->time('H:i'),
             'end_time' => $this->faker->time('H:i'),
+            'status' => '勤務外',
         ];
     }
 }

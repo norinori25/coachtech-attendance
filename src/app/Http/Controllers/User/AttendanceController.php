@@ -34,7 +34,8 @@ class AttendanceController extends Controller
         $today = now()->toDateString();
 
         $attendance = Attendance::firstOrCreate(
-            ['user_id' => $user->id, 'date' => $today]
+            ['user_id' => $user->id, 'date' => $today],
+            ['status' => '勤務外']
         );
 
         switch ($request->input('action')) {
