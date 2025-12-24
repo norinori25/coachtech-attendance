@@ -15,7 +15,11 @@ class BreakRecord extends Model
         'break_end',
     ];
 
-    // リレーション: 休憩は勤怠に属する
+    protected $casts = [
+        'break_start' => 'datetime',
+        'break_end'   => 'datetime',
+    ];
+
     public function attendance()
     {
         return $this->belongsTo(Attendance::class);

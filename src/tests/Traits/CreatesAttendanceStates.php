@@ -15,14 +15,16 @@ trait CreatesAttendanceStates
         ]);
     }
 
-    protected function createWorking($user)
+    protected function createStarted($user)
     {
-        return Attendance::factory()->create([
+        Attendance::factory()->create([
             'user_id' => $user->id,
             'date' => today(),
             'status' => '出勤中',
             'start_time' => now(),
         ]);
+
+        return $user;
     }
 
     protected function createResting($user)
