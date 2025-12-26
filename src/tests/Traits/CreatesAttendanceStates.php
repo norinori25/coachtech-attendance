@@ -43,7 +43,7 @@ trait CreatesAttendanceStates
         ]);
 
         return $attendance;
-    }
+    }   
 
     protected function createFinished($user)
     {

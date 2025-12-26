@@ -120,17 +120,11 @@
                 <tr>
                     <th>休憩</th>
                     <td>
-                        <input type="time" id="break_start_new" name="break_start_new" value="{{ old('break_start_new') }}">
-                        @error('break_start_new')
-                            <div class="form__error">{{ $message }}</div>
-                        @enderror
+                        <input type="time" id="break_start_new" name="break_start_new" value="{{ old('break_start_new', optional($attendance->breakRecords->first()->break_start)->format('H:i')) }}">
                     </td>
                     <td class="time-separator">～</td>
                     <td>
-                        <input type="time" id="break_end_new" name="break_end_new" value="{{ old('break_end_new') }}">
-                        @error('break_end_new')
-                            <div class="form__error">{{ $message }}</div>
-                        @enderror
+                        <input type="time" id="break_end_new" name="break_end_new" value="{{ old('break_end_new', optional($attendance->breakRecords->first()->break_end)->format('H:i')) }}">
                     </td>
                     <td></td>
                 </tr>

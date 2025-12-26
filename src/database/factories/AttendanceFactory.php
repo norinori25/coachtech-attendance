@@ -7,19 +7,13 @@ use App\Models\User;
 
 class AttendanceFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array
-     */
     public function definition()
     {
         return [
-            // 既存ユーザーからランダムに紐付け
-            'user_id' => User::inRandomOrder()->first()->id ?? User::factory(),
-            'date' => $this->faker->date(),
-            'start_time' => $this->faker->time('H:i'),
-            'end_time' => $this->faker->time('H:i'),
+            'user_id' => User::factory(),
+            'date' => now()->format('Y-m-d'),
+            'start_time' => null,
+            'end_time' => null,
             'status' => '勤務外',
         ];
     }

@@ -19,7 +19,7 @@
     {{-- カレンダーバー --}}
     <div class="calendar-bar">
         <div class="calendar-bar__prev">
-            <a href="{{ route('admin.attendance.index', ['month' => $currentMonth->copy()->subMonth()->format('Y-m')]) }}">← 前月
+            <a href="{{ route('attendance.index', ['month' => $currentMonth->copy()->subMonth()->format('Y-m')]) }}">← 前月
             </a>
         </div>
         <div class="calendar-bar__current">
@@ -27,7 +27,7 @@
             {{ $currentMonth->format('Y/m') }}
         </div>
         <div class="calendar-bar__next">
-            <a href="{{ route('admin.attendance.index', ['month' => $currentMonth->copy()->addMonth()->format('Y-m')]) }}">
+            <a href="{{ route('attendance.index', ['month' => $currentMonth->copy()->addMonth()->format('Y-m')]) }}">
                 翌月 →
             </a>
         </div>
