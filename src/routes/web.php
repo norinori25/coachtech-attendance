@@ -33,30 +33,6 @@ Route::post('/login', [AuthenticatedSessionController::class, 'store']);
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
 // ==============================
-// 一般ユーザー（ログイン＋メール認証後）
-// ==============================
-Route::middleware(['auth:web', 'verified'])->group(function () {
-    // 出勤登録
-    Route::get('/attendance', [AttendanceController::class, 'index']);
-    Route::post('/attendance', [AttendanceController::class, 'store']);
-
-    // 勤怠一覧
-    Route::get('/attendance/list', [AttendanceController::class, 'list'])->name('attendance.index');
-
-    // 勤怠詳細
-    Route::get('/attendance/detail/{id}', [AttendanceController::class, 'show'])
-    ->name('attendance.show');
-
-    // 勤怠修正申請一覧（ユーザー用）
-    Route::get('/stamp_correction_request/list', [AttendanceRequestController::class, 'list'])
-        ->name('attendance_request.index');
-
-    // 修正申請保存
-    Route::post('/stamp_correction_request', [AttendanceRequestController::class, 'store'])
-        ->name('attendance_request.store');
-});
-
-// ==============================
 // 管理者（is_admin）
 // ==============================
 Route::middleware(['auth:admin', 'can:admin'])->group(function () {
@@ -88,6 +64,33 @@ Route::middleware(['auth:admin', 'can:admin'])->group(function () {
         ->name('admin.attendance_request.approveForm');
     Route::post('/stamp_correction_request/approve/{attendance_correct_request_id}', [RequestController::class, 'approve'])
         ->name('admin.attendance_request.approve');
+});
+
+// ==============================
+// 一般ユーザー（ログイン＋メール認証後）
+// ==============================
+Route::middleware(['auth:web', 'verified'])->group(function () {
+    // 出勤登録
+    Route::get('/attendance', [AttendanceController::class, 'index']);
+    Route::post('/attendance', [AttendanceController::class, 'store']);
+
+    // 勤怠一覧
+    Route::get('/attendance/list', [AttendanceController::class, 'list'])->name('attendance.index');
+
+    // 勤怠詳細
+    Route::get('/attendance/detail/{id}', [AttendanceController::class, 'show'])
+    ->name('attendance.show');
+
+    // 勤怠修正申請一覧（ユーザー用）
+    Route::get('/stamp_correction_request/list', [AttendanceRequestController::class, 'list'])
+        ->name('attendance_request.index');
+
+    Route::get('/stamp_correction_request/{id}', [AttendanceRequestController::class, 'show'])
+    ->name('attendance_request.show');
+    
+    // 修正申請保存
+    Route::post('/stamp_correction_request', [AttendanceRequestController::class, 'store'])
+        ->name('attendance_request.store');
 });
 
 // ==============================

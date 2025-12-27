@@ -33,7 +33,10 @@ class AttendanceEndTest extends TestCase
         $this->actingAs($user)->post('/attendance', ['action' => 'start']);
         $this->actingAs($user)->post('/attendance', ['action' => 'end']);
 
-        $attendance = Attendance::first();
+        $attendance = Attendance::where('user_id', $user->id)
+        ->where('date', now()->toDateString())
+        ->firstOrFail();
+
         $end = $attendance->end_time->format('H:i');
 
         $response = $this->actingAs($user)->get('/attendance/list');
